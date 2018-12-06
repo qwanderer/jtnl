@@ -14,7 +14,11 @@
         </div>
     </div>
 
-
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     @if(isset($claims) and $claims)
         @foreach($claims as $claim)
             <div class="row">

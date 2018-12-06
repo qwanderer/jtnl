@@ -11,7 +11,18 @@
 
 
     <h1>Creating claim</h1>
-    <form method="post" action="{{ route('user.claim.store') }}">
+    @if (count($errors) > 0)
+        <div class="alert alert-danger">
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="post" action="{{ route('user.claim.store') }}" enctype="multipart/form-data">
         {{ csrf_field() }}
         <div class="form-group">
             <label for="title">Title</label>
@@ -43,6 +54,20 @@
             </select>
             {{ $errors->first('category_id') }}
         </div>
+
+
+        <div class="form-group">
+            <label>Upload files</label>
+            <div class="row">
+                @foreach(range(1,5) as $i)
+                    <div class="col-md-3" style="margin:10px; padding:10px;">
+                        <input class="form-control js_upload_image_input" data-loop="{{ $i }}" name="imgs[]" type="file">
+                        <div id="upload_image_placeholder_{{ $i }}"></div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
         <div class="form-group">
             <button type="submit" class="btn btn-primary" name="submit">Create</button>
         </div>

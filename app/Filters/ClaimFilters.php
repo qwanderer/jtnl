@@ -3,13 +3,22 @@
 namespace App\Filters;
 
 use App\Rail;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class ClaimFilters extends Filters
 {
 
-    public static $filters = ['by_day', 'by_rail'];
+    public static $filters = ['by_day', 'by_rail', 'wi'];
 
-    protected function by_time($days)
+    protected function wi($flag)
+    {
+        if($flag==true){
+            return $this->builder;
+        }
+        return $this->builder;
+    }
+
+    protected function by_day($days)
     {
         return $this->builder;
     }

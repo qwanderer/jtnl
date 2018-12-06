@@ -36,7 +36,7 @@ class User extends Authenticatable
 
     public function canCreateClaim()
     {
-        return $this->claims()->count()<config('app.max_user_claims');
+        return $this->claims()->count() < config('app.max_user_claims');
     } // func
 
 } // class

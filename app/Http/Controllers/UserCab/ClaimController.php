@@ -5,6 +5,7 @@ namespace App\Http\Controllers\UserCab;
 use App\Claim;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreClaim;
+use Illuminate\Support\Facades\Storage;
 
 class ClaimController extends Controller
 {
@@ -13,6 +14,12 @@ class ClaimController extends Controller
         $this->middleware("auth");
     }
 
+
+
+
+
+
+
     /**
      * Display a listing of the resource.
      *
@@ -20,10 +27,20 @@ class ClaimController extends Controller
      */
     public function index()
     {
+        //dd([storage_path("claims"),  public_path()]);
         return view("user_cab.main_view", [
             'claims'=>auth()->user()->claims()->get(),
         ]);
     }
+
+
+
+
+
+
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -37,6 +54,15 @@ class ClaimController extends Controller
         }
         return view("user_cab.claim.create_form");
     }
+
+
+
+
+
+
+
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -52,11 +78,28 @@ class ClaimController extends Controller
 
 
         $validatedData = $request->validated();
-        Claim::create(array_merge($validatedData, ['user_id' => auth()->id()]));
+
+        $images = $validatedData['imgs'];
+        unset($validatedData['imgs']);
+
+        $claim = Claim::create(array_merge($validatedData, ['user_id' => auth()->id()]));
+
+        $claim->saveImages($images);
 
         return redirect()->route("user.claim.index")
             ->with('flash', 'Your claim has been added!');
     } // func
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Display the specified resource.
@@ -69,6 +112,14 @@ class ClaimController extends Controller
         return redirect()->route('user.claim.edit', ['claim'=>$claim]);
     }
 
+
+
+
+
+
+
+
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -77,40 +128,55 @@ class ClaimController extends Controller
      */
     public function edit(Claim $claim)
     {
+        //dd("edit");
         return view("user_cab.claim.update_form", ['claim'=>$claim]);
     } // func
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Claim $claim
-     * @return \Illuminate\Http\Response
-     */
+
+
+
+
+
+
+
+
     public function update(Claim $claim)
     {
-
         $this->authorize('update', $claim);
 
-        $claim->update(request()->validate([
-            'title'=>"required|min:5|max:255",
-            'descr'=>"required|min:5|max:255",
-            'rail_id'=>'exists:rails,id',
-            'category_id'=>'exists:categories,id'
-        ]));
+        $validatedData = request()->validate(Claim::getValidationRules());
 
+        $images = $validatedData['imgs'];
+        unset($validatedData['imgs']);
+
+        $claim->update($validatedData);
+
+        if($images and is_array($images) and count($images)>0)
+        {
+            $all_images = [];
+            foreach($images as $image)
+            {
+                $name = $image->getClientOriginalName();
+                $image->move($claim->getPathToImgs(), $name);
+                $all_images[] = $name;
+            } // foreach
+            $claim->addImages($all_images);
+        } // if
         return redirect()->route('user.claim.edit', ['claim'=>$claim]);
-    }
+
+    } // FUNC
+
 
     /**
      * Remove the specified resource from storage.
-     *
      * @param Claim $claim
-     * @return \Illuminate\Http\Response
-     * @internal param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Claim $claim)
     {
         $this->authorize('delete', $claim);
+
         $claim->delete();
         return redirect()->route("user.claim.index")->with('flash', "Claim deleted");
     }

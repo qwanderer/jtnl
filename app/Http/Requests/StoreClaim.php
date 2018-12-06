@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Claim;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreClaim extends FormRequest
@@ -23,11 +24,6 @@ class StoreClaim extends FormRequest
      */
     public function rules()
     {
-        return [
-            'title'=>"required|min:5|max:255",
-            'descr'=>"required|min:5|max:255",
-            'rail_id'=>'exists:rails,id',
-            'category_id'=>'exists:categories,id'
-        ];
+        return Claim::getValidationRules();
     }
 }

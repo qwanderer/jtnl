@@ -3,8 +3,8 @@
 
 
 
-Route::get('/datatable', 'DatatableController@getIndex')->name("datatables");
-Route::any('/datatable/data', 'DatatableController@anyData')->name("datatables.data");
+//Route::get('/datatable', 'DatatableController@getIndex')->name("datatables");
+//Route::any('/datatable/data', 'DatatableController@anyData')->name("datatables.data");
 
 Auth::routes();
 Route::post('logout', 'Auth\LoginController@logout')->name("logout");

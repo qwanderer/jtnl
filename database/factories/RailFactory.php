@@ -15,6 +15,6 @@ use Faker\Generator as Faker;
 
 $factory->define(App\Rail::class, function (Faker $faker) {
     return [
-        'title' => $faker->name,
+        'title' => "rail_".$faker->name,
     ];
 });

@@ -19,6 +19,7 @@ class CreateClaimsTable extends Migration
 
             $table->string("title", 1000);
             $table->text("descr");
+            $table->text('imgs')->nullable();
 
             $table->unsignedInteger("user_id");
             $table->unsignedInteger("rail_id");
